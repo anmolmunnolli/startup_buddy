@@ -48,6 +48,8 @@ if st.button("Get Recommendations"):
                 
                 st.write("### KPI Responses:")
                 st.dataframe(kpi_df)  # Display as a table
+                kpi_df.to_csv(f"{industry}.csv", index=False)  # Save DataFrame to a CSV file
+
             else:
                 st.write("No recommendations available.")
         else:
