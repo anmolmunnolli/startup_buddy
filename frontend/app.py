@@ -2,7 +2,8 @@ import streamlit as st
 import requests
 import pandas as pd
 
-industry=None
+industry = None
+
 # Function to send industry and dataset to the backend
 def send_data_to_backend(industry, uploaded_file):
     # Prepare the files and data to send to the backend
@@ -35,14 +36,21 @@ if st.button("Get Recommendations"):
         if response.status_code == 200:
             recommendations = response.json().get("recommendations")
             
-            # Display Top 10 Recommendations as a bullet point list
-            st.write("### Top 10 Recommendations:")
-            
-            for recommendation in recommendations:
-                st.markdown(f"- {recommendation}")
+            # Display recommendations as a dataframe (table)
+            if recommendations:
+                # Create a pandas DataFrame for the KPI responses
+                kpi_df = pd.DataFrame({
+                    "KPI": ["Customer Acquisition Costs", "Average order size", "Cash Runway", "K-factor", 
+                            "Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", 
+                            "LTV/CAC ratio", "Gross sales", "Monthly active users", "Net Promoter Score"],
+                    "Response": recommendations
+                })
+                
+                st.write("### KPI Responses:")
+                st.dataframe(kpi_df)  # Display as a table
+            else:
+                st.write("No recommendations available.")
         else:
             st.error("Error getting recommendations from the backend.")
     else:
         st.warning("Please enter an industry and upload a dataset.")
-
-

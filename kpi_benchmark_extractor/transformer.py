@@ -16,19 +16,21 @@ def get_industry():
 
 industry = get_industry()
 
-kpis = ["Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", "LTV/CAC ratio"]
+kpis = ["Customer Acquisition Costs","Average order size","Cash Runway","K-factor",\
+"Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", "LTV/CAC ratio",\
+"Gross sales","Monthly active users","Net Promoter Score"]
 
 model_name = "google/flan-t5-large"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
 if industry:
-    prompt = f"What is the average gross sales for {industry} business?"
-    inputs = tokenizer(prompt, return_tensors="pt")
-
-    outputs = model.generate(inputs.input_ids, max_length=50)
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print(f"Model response for {industry}: {response}")
+    for kpi in kpis:
+        prompt = f"What is the average {kpi} for a {industry} company?"
+        inputs = tokenizer(prompt, return_tensors="pt")
+        outputs = model.generate(inputs.input_ids, max_length=50)
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print(f"Model response for kpi- {kpi} in {industry}: {response}")
 else:
     print("Industry variable is not set. Please ensure the Flask app is running and the variable is set.")
 
