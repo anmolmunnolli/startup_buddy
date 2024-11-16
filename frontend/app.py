@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
+industry=None
 # Function to send industry and dataset to the backend
 def send_data_to_backend(industry, uploaded_file):
     # Prepare the files and data to send to the backend

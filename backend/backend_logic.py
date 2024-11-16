@@ -6,6 +6,7 @@ app = Flask(__name__)
 @app.route("/catch_data", methods=["POST"])
 def catch_data():
     # Get the industry from the form data
+    global industry
     industry = request.form.get("industry")
     
     # Get the uploaded CSV file from the request
@@ -30,6 +31,13 @@ def catch_data():
         return jsonify({"recommendations": recommendations})
     else:
         return jsonify({"error": "Missing industry or file"}), 400
+
+
+@app.route('/get-industry', methods=['GET'])
+def get_industry():
+    global industry
+    return jsonify({"industry": industry})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
