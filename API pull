@@ -1,0 +1,36 @@
+# NewsAPI pull
+url = 'https://newsapi.org/v2/everything'
+parameters = {
+    'q': 'business OR industry OR technology',  # Search keywords
+    'from': '2024-01-01',                       # Start date for news
+    'sortBy': 'publishedAt',                    # Sorting articles by latest
+    'apiKey': '0c98db7477374ac68141c07f38495168'                    # Replace with your News API key
+}
+
+# Make the request to the News API
+response = requests.get(url, params=parameters)
+
+# Check if the request was successful
+if response.status_code == 200:
+    data = response.json()  # Parse the response as JSON
+    articles = data['articles']
+
+    # Extract the relevant information and convert it to a DataFrame
+    news_data = []
+    for article in articles:
+        news_data.append({
+            'title': article['title'],
+            'description': article['description'],
+            'content': article['content'],
+            'publishedAt': article['publishedAt'],
+            'source': article['source']['name']
+        })
+
+    df = pd.DataFrame(news_data)
+    print(df.head())
+
+    # Save the data to a CSV file
+    df.to_csv('news_data.csv', index=False)
+
+else:
+    print(f"Error: {response.status_code} - {response.text}")
