@@ -1,6 +1,6 @@
 import requests
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
+# from frontend.app import industry
 # Function to fetch `industry` dynamically
 def get_industry():
     try:
@@ -14,7 +14,6 @@ def get_industry():
         print(f"Error fetching industry: {e}")
         return None
 
-# Fetch industry value
 industry = get_industry()
 
 kpis = ["Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", "LTV/CAC ratio"]
@@ -24,7 +23,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
 if industry:
-    prompt = f"What is the average customer acquisition cost for {industry} company in the USA?"
+    prompt = f"What is the average gross sales for {industry} business?"
     inputs = tokenizer(prompt, return_tensors="pt")
 
     outputs = model.generate(inputs.input_ids, max_length=50)
@@ -32,3 +31,4 @@ if industry:
     print(f"Model response for {industry}: {response}")
 else:
     print("Industry variable is not set. Please ensure the Flask app is running and the variable is set.")
+
