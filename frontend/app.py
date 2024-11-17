@@ -2,6 +2,10 @@ import streamlit as st
 import requests
 import pandas as pd
 import re
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+import matplotlib.pyplot as plt
+import numpy as np
+
 industry = None
 
 # Function to send industry and dataset to the backend
@@ -128,9 +132,6 @@ if st.button("Get Recommendations"):
                 print("\nAligned df2:")
                 print(kpis_transposed.head())
 
-
-                import matplotlib.pyplot as plt
-                import numpy as np
                 # Ensure that all columns are numeric in df1 and df2
                 relevant_original_df = relevant_original_df.apply(pd.to_numeric, errors='coerce')
                 kpis_transposed = kpis_transposed.apply(pd.to_numeric, errors='coerce')
@@ -190,3 +191,72 @@ if st.button("Get Recommendations"):
             st.error("Error getting recommendations from the backend.")
     else:
         st.warning("Please enter an industry and upload a dataset.")
+
+def time_series_forecasting(df, column_name, freq='M', periods=12):
+    # Ensure the data has a datetime index
+    if 'Date' not in df.columns:
+        st.error("The data must contain a 'Date' column for time series forecasting.")
+        return None, None
+
+    # Convert 'date' column to datetime
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = df.set_index('Date')
+
+    # Resample to ensure consistent monthly frequency
+    ts_data = df[column_name].resample(freq).mean()
+
+    # Check if there are enough data points
+    if len(ts_data.dropna()) < 2 * periods:
+        st.error(f"Not enough data points to forecast {periods} months ahead.")
+        return None, None
+
+    # Fit the Exponential Smoothing model
+    model = ExponentialSmoothing(ts_data, seasonal='add', seasonal_periods=12)
+    fit = model.fit()
+
+    # Forecast the next 'periods' months
+    forecast = fit.forecast(periods)
+
+    return ts_data, forecast
+
+# Add a button for time series forecasting
+if st.button("Perform Time Series Forecasting"):
+    if uploaded_file:
+        # Load the uploaded CSV file into a DataFrame
+        original_df = pd.read_csv(uploaded_file)
+        
+        # List numeric columns for selection
+        numeric_columns = original_df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+        
+        # Ensure 'date' column exists and is in the correct format
+        if 'Date' in original_df.columns:
+            selected_column = st.selectbox("Select a column for forecasting", numeric_columns)
+            
+            if selected_column:
+                # Perform time series forecasting
+                ts_data, forecast = time_series_forecasting(original_df, selected_column)
+                
+                if ts_data is not None and forecast is not None:
+                    # Plot the original time series and forecast
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    ts_data.plot(ax=ax, label="Historical Data")
+                    forecast.plot(ax=ax, label="Forecast", linestyle="--")
+                    plt.legend()
+                    plt.title(f"Time Series Forecast for {selected_column}")
+                    plt.xlabel("Date")
+                    plt.ylabel(selected_column)
+                    st.pyplot(fig)
+                    
+                    # Display the forecast data
+                    st.write("Forecasted Data:")
+                    forecast_df = forecast.reset_index()
+                    forecast_df.columns = ['Date', 'Forecast']
+                    st.dataframe(forecast_df)
+                    st.download_button(
+                        label="Download Forecast as CSV",
+                        data=forecast_df.to_csv(index=False),
+                        file_name=f"{selected_column}_forecast.csv",
+                        mime='text/csv'
+                    )
+        else:
+            st.error("The data must include a 'Date' column for time series analysis.")
