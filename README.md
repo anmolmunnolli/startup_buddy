@@ -45,17 +45,31 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
 - **Virija Nandamudi**  
 - **Venkatesh Talasila**
 
-## Key Features
+## Summary  
+**Startup Buddy** is a smart data tool designed to help businesses analyze their performance and plan for growth. Comparing your company’s KPIs (Key Performance Indicators) with industry standards provides clear insights into how your business is doing and what you can improve. The platform uses advanced AI models, intuitive visualizations, and forecasting to make decision-making easy and effective.  
 
-- **AI-Powered KPI Analysis**: Utilize Google's **Flan T5 LLM** to gather benchmark data and evaluate your business’s KPIs against industry standards.
-  
-- **Recommendation Engine**: Powered by Meta's **Llama LLM**, our system generates actionable, data-driven strategies tailored specifically to your startup's performance.
-  
-- **Sentiment Analysis**: Using **Hugging Face's BERT** model, we analyze the sentiment around your KPIs to understand the emotional and financial impact on your business.
-  
-- **Time Series Analysis & Visualization**: Our platform offers dynamic visualizations that help interpret trends and statistical foundations, making it easier to comprehend the impact of your decisions over time.
+## Key Features  
 
-- **User-Friendly Interface**: Developed using **Streamlit** and **Flask**, the app ensures a seamless and easy-to-use experience.
+### 1. Compare with Industry Benchmarks  
+- Get industry-specific KPI benchmarks using Google’s **Flan-T5** model to see how your business stacks up.  
+
+### 2. Personalized Recommendations  
+- Receive improvement suggestions based on your KPI data, powered by Facebook’s **Llama** model.  
+
+### 3. Forecast Future Trends  
+- Predict your KPI performance for the next 12 months using a reliable **Holt-Winters statistical technique**.  
+
+### 4. Sentiment Analysis  
+- Understand market trends with sentiment analysis of news articles using **FinancialBERT**, giving you a clear picture of the current business climate.  
+
+### 5. Visualize Your Data  
+- View easy-to-understand charts and graphs created with **Matplotlib** and displayed in a user-friendly interface built with **Streamlit**.  
+
+### 6. Flexible and Versatile  
+- Works for businesses in any industry, providing tailored insights without restrictions.  
+
+**Startup Buddy** simplifies complex data analysis, giving you the tools to make informed decisions and achieve your business goals.
+
   
 ## **How to Run the Project**
 
