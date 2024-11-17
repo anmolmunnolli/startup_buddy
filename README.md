@@ -67,10 +67,10 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
   ```bash
    pip install -r requirements.txt
 ### **4. Run the Backend**
-- After setting up the virtual environment and installing the dependencies, navigate to the backend folder and run the backend-logic.py file:
+- After setting up the virtual environment and installing the dependencies, run the backend-logic.py file:
   ```bash
    python ./backend/backend_logic.py
 ### **5. Run the Frontend**
-- To start the frontend using Streamlit, navigate to the folder containing the app.py file and run:
+- To start the frontend using Streamlit, run the app.py file:
    ```bash
    streamlit run ./frontend/app.py
