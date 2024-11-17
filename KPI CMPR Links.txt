@@ -1,0 +1,20 @@
+Construction Industry:
+https://app.powerbi.com/groups/me/reports/f66da05a-51de-4be8-bee7-155dafa424cf/15fbaa307b5764f0df4e?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=c9ecf85fd176251ae66c&height=719.53&width=1270.53&bookmarkGuid=19a74336-4562-4e97-b896-1abe18cb3d01
+
+Retail Industry:
+https://app.powerbi.com/groups/me/reports/b81377d7-bb11-4d2a-9388-63509d6b3f30/ac9ee46759778e3dc186?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=688c2a88d1e659829305&height=719.53&width=1270.53&bookmarkGuid=36a43152-79b9-4281-b282-0687aadc5513
+
+Finance Industry:
+https://app.powerbi.com/groups/me/reports/3e72cf00-5711-48e3-9e4f-d946db707324/91638bc682c096855ee1?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=50eefad5c27489dee22c&height=719.53&width=1270.53&bookmarkGuid=02ce3cd4-4479-42ab-95a4-510f90c63f9f
+
+Food Industry:
+https://app.powerbi.com/groups/me/reports/0b459bdc-27c9-4f5f-9ed7-7a8d462fb89a/e20ec288370c040b76c0?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=c4a8fec94e40bd7497f3&height=719.53&width=1270.53&bookmarkGuid=76d98b0b-340a-43e5-87bf-cf9e273f99b3
+
+Healthcare Industry:
+https://app.powerbi.com/groups/me/reports/0f29ccb8-c502-412b-8733-4ce03439362c/47acd683bb853ccd29e1?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=3aa33144f03dd5ecd4ff&height=719.53&width=1270.53&bookmarkGuid=291a4cfe-ccb4-432b-9350-7d2b0b182506
+
+Hospitality Industry:
+https://app.powerbi.com/groups/me/reports/c4811f8e-ff4d-4f73-bdac-183fed40812a/25bec4f1b0188c2e879a?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=6cf333ecf2aa23875ca6&height=719.53&width=1270.53&bookmarkGuid=d2139cb5-6f01-41eb-bf3f-764e937c17f7
+
+Tech Industry:
+https://app.powerbi.com/groups/me/reports/a7e88e12-412e-48f0-bfe7-489a0f2a4ab1/9e96c24cc644c5a0c86d?ctid=1113be34-aed1-4d00-ab4b-cdd02510be91&pbi_source=shareVisual&visual=7b43d6ae5263f4a62a23&height=719.53&width=1270.53&bookmarkGuid=07115d26-3a88-4441-9778-ea034c0642f5
