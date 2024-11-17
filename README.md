@@ -55,7 +55,7 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
   
 - **Time Series Analysis & Visualization**: Our platform offers dynamic visualizations that help interpret trends and statistical foundations, making it easier to comprehend the impact of your decisions over time.
 
-- **User-Friendly Interface**: Developed using **Streamlit** and **Flask**, the app ensures a seamless and easy-to-use experience with no need for authentication, ensuring quick access while maintaining data privacy.
+- **User-Friendly Interface**: Developed using **Streamlit** and **Flask**, the app ensures a seamless and easy-to-use experience.
   
 ## **How to Run the Project**
 
