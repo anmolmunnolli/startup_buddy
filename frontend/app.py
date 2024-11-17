@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-
+import re
 industry = None
 
 # Function to send industry and dataset to the backend
@@ -55,10 +55,54 @@ if st.button("Get Recommendations"):
                 print(original_df.columns, kpi_df.columns)
 
 
+
+
+                # Function to clean and convert the values in Response column
+                def clean_and_convert(value):
+                    # Remove dollar signs, commas, quotes, and percentages
+                    value = re.sub(r'[\$,"]', '', value)  # Remove $, commas, and quotes
+                    value = value.strip()  # Remove leading/trailing spaces
+                    
+                    # Convert words like million, billion into numbers
+                    if 'million' in value.lower():
+                        value = re.sub(r'million', '', value, flags=re.IGNORECASE)
+                        value = float(value) * 1e6  # Multiply by 1 million
+                    elif 'billion' in value.lower():
+                        value = re.sub(r'billion', '', value, flags=re.IGNORECASE)
+                        value = float(value) * 1e9  # Multiply by 1 billion
+                    elif 'tens of millions' in value.lower():
+                        value = 1e7  # Assign a value for "tens of millions"
+                    
+                    # Check if the value is a percentage, convert to decimal if necessary
+                    elif value.endswith('%'):
+                        value = float(value.rstrip('%')) / 100  # Convert percentage to decimal
+
+                    # Attempt to convert the value to a float or int
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        pass  # If conversion fails, leave the value as is (string)
+
+                    return value
+
+                # Apply the cleaning function to the 'Response' column
+                kpi_df['Cleaned_Response'] = kpi_df['Response'].apply(clean_and_convert)
+
+                # Now, the cleaned responses will be numeric or appropriate values
+                # print(kpi_df)
+
+
                 kpis_transposed = kpi_df.set_index('KPI').T
                 print(kpis_transposed.columns)
+                kpis_transposed.reset_index(inplace=True)
 
-                
+                # Drop the first row which contains the 'Response' values
+                # kpis_transposed.drop(index=0, inplace=True)
+                kpis_transposed = kpis_transposed.drop(index=0)
+
+                # Remove the first unnamed column (it is now in the column 'index')
+                kpis_transposed = kpis_transposed.drop(columns=['index'])
+                kpis_transposed.to_csv("cleaned_kpi.csv",header=True)
 
 
                 # # Step 2: Align the column names of kpis_transposed to match df1's relevant columns
