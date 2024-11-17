@@ -83,7 +83,7 @@ def get_recommendations_from_llama(industry, kpis_data):
         return {"error": "Error in fetching recommendations from LLaMA service"}
 
 def generate_kpi_recommendations(industry, kpis_data):
-    model_name = "openai-community/gpt2"  # You can adjust the model as per your preference
+    model_name = "meta-llama/Llama-3.2-1B"  # You can adjust the model as per your preference
     hf_token = os.getenv("HF_TOKEN") # Replace this with your actual token
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
@@ -92,13 +92,43 @@ def generate_kpi_recommendations(industry, kpis_data):
     recommendations = []
     
 
-    # Loop through KPIs and create prompts to generate recommendations
+        # Build the KPI list dynamically
+    kpi_list = ""
     for kpi, value in kpis_data.items():
-        prompt = f"Given the KPI {kpi} with a value of {value} for a {industry} company, what actions or recommendations can improve this KPI?"
-        inputs = tokenizer(prompt, return_tensors="pt")
-        outputs = model.generate(inputs.input_ids, max_length=150,    attention_mask=inputs.attention_mask,    pad_token_id=tokenizer.pad_token_id , num_return_sequences=1)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        recommendations.append({"KPI": kpi, "Recommendation": response})
+        kpi_list += f"- {kpi}: {value}\n"
+
+    # Construct the final prompt
+    prompt = (
+        f"You are a business expert providing actionable recommendations for improving key performance indicators (KPIs) "
+        f"in a company operating in the {industry} industry. Below are the KPIs and their current values:\n{kpi_list}\n\n"
+        f"### Recommendations:\n"
+    )
+
+
+    # Generate recommendations
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(
+        inputs.input_ids,
+        max_length=1000,
+        attention_mask=inputs.attention_mask,
+        pad_token_id=tokenizer.pad_token_id,
+        num_return_sequences=1,
+        temperature=0.7,
+        top_k=40,
+        top_p=0.8
+    )
+
+    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    response = response[len(prompt):].strip()
+    print(response)
+
+    # Loop through KPIs and create prompts to generate recommendations
+    # for kpi, value in kpis_data.items():
+    #     prompt = f"Given the KPI {kpi} with a value of {value} for a {industry} company, what actions or recommendations can improve this KPI?"
+    #     inputs = tokenizer(prompt, return_tensors="pt")
+    #     outputs = model.generate(inputs.input_ids, max_length=150,    attention_mask=inputs.attention_mask,    pad_token_id=tokenizer.pad_token_id , num_return_sequences=1)
+    #     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    recommendations.append({"KPI": kpi, "Recommendation": response})
     
     return recommendations
 

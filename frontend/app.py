@@ -179,8 +179,11 @@ if st.button("Get Recommendations"):
 
 
                 if llama_recommendations:
-                    st.write("### LLaMA Recommendations")
-                    st.write(llama_recommendations)
+                    # st.write("### LLaMA Recommendations")
+                    # st.write(llama_recommendations)
+                    llama_df = pd.DataFrame(llama_recommendations).drop_duplicates()
+                    st.write("### LLaMA Recommendations:")
+                    st.dataframe(llama_df)
             else:
                 st.write("No recommendations available.")
         else:
