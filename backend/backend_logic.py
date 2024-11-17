@@ -32,16 +32,16 @@ def catch_data():
 
         try:
             df = pd.read_csv(file)
+            df.to_csv(f"original_{industry}.csv")
             print(f"CSV data preview:\n{df.head()}")
         except Exception as e:
             return jsonify({"error": f"Error reading CSV file: {str(e)}"}), 400
 
-        kpis = ["Customer Acquisition Costs", "Average order size", "Cash Runway", "K-factor", "Churn Rate", 
-                "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", "LTV/CAC ratio", 
-                "Gross sales", "Monthly active users", "Net Promoter Score"]
+        kpis = ["Customer Acquisition Costs (CAC)", "Churn Rate (%)", "Average Order Size ($)", "Monthly Recurring Revenue (MRR) ($)", 
+                            "Annual Run Rate (ARR) ($)", "Cash Runway (Months)", "Burn Rate ($/Month)", "Gross Sales ($)", 
+                            "Monthly Active Users (MAU)", "Net Promoter Score (NPS)", "LTV/CAC Ratio"]
 
         kpi_responses = generate_kpi_responses(industry, kpis)
-        
         return jsonify({"recommendations": kpi_responses})
     else:
         return jsonify({"error": "Missing industry or file"}), 400

@@ -16,9 +16,9 @@ def get_industry():
 
 industry = get_industry()
 
-kpis = ["Customer Acquisition Costs","Average order size","Cash Runway","K-factor",\
-"Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", "LTV/CAC ratio",\
-"Gross sales","Monthly active users","Net Promoter Score"]
+kpis = ["Customer Acquisition Costs (CAC)", "Churn Rate (%)", "Average Order Size ($)", "Monthly Recurring Revenue (MRR) ($)", 
+                            "Annual Run Rate (ARR) ($)", "Cash Runway (Months)", "Burn Rate ($/Month)", "Gross Sales ($)", 
+                            "Monthly Active Users (MAU)", "Net Promoter Score (NPS)", "LTV/CAC Ratio"]
 
 model_name = "google/flan-t5-large"
 tokenizer = AutoTokenizer.from_pretrained(model_name)

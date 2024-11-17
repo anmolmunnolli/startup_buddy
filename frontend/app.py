@@ -40,15 +40,45 @@ if st.button("Get Recommendations"):
             if recommendations:
                 # Create a pandas DataFrame for the KPI responses
                 kpi_df = pd.DataFrame({
-                    "KPI": ["Customer Acquisition Costs", "Average order size", "Cash Runway", "K-factor", 
-                            "Churn Rate", "Monthly Recurring Revenue", "Annual Run Rate", "Burn Rate", 
-                            "LTV/CAC ratio", "Gross sales", "Monthly active users", "Net Promoter Score"],
+                    "KPI": ["Customer Acquisition Costs (CAC)", "Churn Rate (%)", "Average Order Size ($)", "Monthly Recurring Revenue (MRR) ($)", 
+                            "Annual Run Rate (ARR) ($)", "Cash Runway (Months)", "Burn Rate ($/Month)", "Gross Sales ($)", 
+                            "Monthly Active Users (MAU)", "Net Promoter Score (NPS)", "LTV/CAC Ratio"],
                     "Response": recommendations
                 })
                 
                 st.write("### KPI Responses:")
                 st.dataframe(kpi_df)  # Display as a table
                 kpi_df.to_csv(f"{industry}.csv", index=False)  # Save DataFrame to a CSV file
+
+
+                original_df = pd.read_csv(f"../backend/original_{industry}.csv")
+                print(original_df.columns, kpi_df.columns)
+
+
+                kpis_transposed = kpi_df.set_index('KPI').T
+                print(kpis_transposed.columns)
+
+                
+
+
+                # # Step 2: Align the column names of kpis_transposed to match df1's relevant columns
+                # kpis_transposed.columns = original_df.columns[3:]  # Align to df1 columns starting from the 4th column
+                
+
+                # print(kpis_transposed.columns, original_df.columns)
+                # # Step 3: Compare both DataFrames (df1 and kpis_transposed)
+                # # For simplicity, we will just add both DataFrames together based on the common KPI columns.
+                # comparison_df = pd.concat([original_df.iloc[:, 3:], kpis_transposed], axis=1)
+
+                # # Optional: Rename the columns for clarity if needed
+                # comparison_df.columns = [col + ' - df1' if i < len(original_df.columns[3:]) else col + ' - kpis_df' 
+                #                         for i, col in enumerate(comparison_df.columns)]
+
+                # # Show the result
+                # print(comparison_df)
+
+                # comparison_df.to_csv("compare.csv", header=True)
+
 
             else:
                 st.write("No recommendations available.")
