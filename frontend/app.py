@@ -5,6 +5,16 @@ import re
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import matplotlib.pyplot as plt
 import numpy as np
+from textblob import TextBlob
+import nltk
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+from nltk.sentiment import SentimentIntensityAnalyzer
+from nltk.tokenize import sent_tokenize
+
+
+nltk.download('punkt')
+nltk.data.path.append(r"C:\Users\IU Student\nltk_data")
 
 industry = None
 
@@ -265,3 +275,46 @@ if st.session_state.uploaded_file:
                 )
         else:
             st.error("The data must include a 'Date' column for time series analysis.")
+
+# Load the pre-trained model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
+model = AutoModelForSequenceClassification.from_pretrained("ahmedrachid/FinancialBERT-Sentiment-Analysis")
+# Define function to analyze sentiment
+def analyze_sentiment(news_paragraphs):
+    sentiment_results = []
+    
+    for paragraph in news_paragraphs:
+        # Tokenize the paragraph
+        inputs = tokenizer(paragraph, return_tensors="pt", truncation=True, padding=True, max_length=512)
+        
+        # Perform sentiment analysis
+        with torch.no_grad():
+            outputs = model(**inputs)
+        
+        # Get the sentiment prediction
+        prediction = torch.argmax(outputs.logits, dim=-1).item()
+        
+        # Append result: 0 for negative, 1 for positive
+        sentiment_results.append("Positive" if prediction == 1 else "Negative")
+    
+    return sentiment_results
+
+# Streamlit UI
+st.subheader("News Paragraph Sentiment Analysis")
+uploaded_news_file = st.file_uploader("Upload News Articles Text File", type=["txt"])
+
+if uploaded_news_file:
+    # Read and split the uploaded text into paragraphs
+    news_articles_text = uploaded_news_file.read().decode("utf-8")
+    news_paragraphs_list = news_articles_text.split("\n\n")  # Split text by blank lines to get paragraphs
+    
+    sentiment_results = analyze_sentiment(news_paragraphs_list)
+
+    st.write("Sentiment Analysis Results:")
+    for i, sentiment in enumerate(sentiment_results):
+        color = "green" if sentiment == "Positive" else "red"
+        st.markdown(f"<p style='color:{color};'>{news_paragraphs_list[i]}</p>", unsafe_allow_html=True)
+        st.write(f"Sentiment: {sentiment}")
+
+else:
+    st.warning("Please upload a text file with news articles.")
