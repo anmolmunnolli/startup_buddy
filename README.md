@@ -69,7 +69,7 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
 ### **4. Run the Backend**
 - After setting up the virtual environment and installing the dependencies, navigate to the backend folder and run the backend-logic.py file:
   ```bash
-   python ./backend/backend-logic.py
+   python ./backend/backend_logic.py
 ### **5. Run the Frontend**
 - To start the frontend using Streamlit, navigate to the folder containing the app.py file and run:
    ```bash
