@@ -30,7 +30,9 @@ industry = st.text_input("Enter Industry Name (e.g., Technology)", "")
 
 # Dataset input (CSV file upload)
 uploaded_file = st.file_uploader("Upload KPI Data (CSV)", type=["csv"])
-
+if uploaded_file:
+    st.session_state.uploaded_file = uploaded_file
+    
 # Button to send both industry and dataset to the backend
 if st.button("Get Recommendations"):
     if industry and uploaded_file:
@@ -192,14 +194,11 @@ if st.button("Get Recommendations"):
     else:
         st.warning("Please enter an industry and upload a dataset.")
 
+
 def time_series_forecasting(df, column_name, freq='M', periods=12):
     # Ensure the data has a datetime index
-    if 'Date' not in df.columns:
-        st.error("The data must contain a 'Date' column for time series forecasting.")
-        return None, None
-
-    # Convert 'date' column to datetime
-    df['Date'] = pd.to_datetime(df['Date'])
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    df = df.dropna(subset=['Date'])  # Remove rows with invalid dates
     df = df.set_index('Date')
 
     # Resample to ensure consistent monthly frequency
@@ -219,44 +218,50 @@ def time_series_forecasting(df, column_name, freq='M', periods=12):
 
     return ts_data, forecast
 
-# Add a button for time series forecasting
-if st.button("Perform Time Series Forecasting"):
-    if uploaded_file:
-        # Load the uploaded CSV file into a DataFrame
-        original_df = pd.read_csv(uploaded_file)
-        
-        # List numeric columns for selection
-        numeric_columns = original_df.select_dtypes(include=['float64', 'int64']).columns.tolist()
-        
-        # Ensure 'date' column exists and is in the correct format
+
+# Step 1: Persist file and selected column in session state
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+
+if "selected_column" not in st.session_state:
+    st.session_state.selected_column = None
+
+# Step 3: Process uploaded file
+if st.session_state.uploaded_file:
+    original_df = pd.read_csv(st.session_state.uploaded_file)
+    # List numeric columns for selection
+    numeric_columns = original_df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+
+    # Step 4: Column selection
+    selected_column = st.selectbox("Select a column for forecasting", numeric_columns, key="selected_column")
+
+    # Step 5: Perform forecasting when the button is clicked
+    if st.button("Perform Time Series Forecasting"):
         if 'Date' in original_df.columns:
-            selected_column = st.selectbox("Select a column for forecasting", numeric_columns)
-            
-            if selected_column:
-                # Perform time series forecasting
-                ts_data, forecast = time_series_forecasting(original_df, selected_column)
-                
-                if ts_data is not None and forecast is not None:
-                    # Plot the original time series and forecast
-                    fig, ax = plt.subplots(figsize=(10, 6))
-                    ts_data.plot(ax=ax, label="Historical Data")
-                    forecast.plot(ax=ax, label="Forecast", linestyle="--")
-                    plt.legend()
-                    plt.title(f"Time Series Forecast for {selected_column}")
-                    plt.xlabel("Date")
-                    plt.ylabel(selected_column)
-                    st.pyplot(fig)
-                    
-                    # Display the forecast data
-                    st.write("Forecasted Data:")
-                    forecast_df = forecast.reset_index()
-                    forecast_df.columns = ['Date', 'Forecast']
-                    st.dataframe(forecast_df)
-                    st.download_button(
-                        label="Download Forecast as CSV",
-                        data=forecast_df.to_csv(index=False),
-                        file_name=f"{selected_column}_forecast.csv",
-                        mime='text/csv'
-                    )
+            ts_data, forecast = time_series_forecasting(original_df, selected_column)
+
+            if ts_data is not None and forecast is not None:
+                # Plot the original time series and forecast
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ts_data.plot(ax=ax, label="Historical Data")
+                forecast.plot(ax=ax, label="Forecast", linestyle="--")
+                plt.legend()
+                plt.title(f"Time Series Forecast for {selected_column}")
+                plt.xlabel("Date")
+                plt.ylabel(selected_column)
+                st.pyplot(fig)
+
+                # Display the forecast data
+                forecast_df = pd.DataFrame({
+                    'Date': forecast.index,
+                    'Forecast': forecast.values
+                })
+                st.dataframe(forecast_df)
+                st.download_button(
+                    label="Download Forecast as CSV",
+                    data=forecast_df.to_csv(index=False),
+                    file_name=f"{selected_column}_forecast.csv",
+                    mime='text/csv'
+                )
         else:
             st.error("The data must include a 'Date' column for time series analysis.")
