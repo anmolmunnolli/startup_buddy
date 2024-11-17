@@ -4,8 +4,6 @@
 
 Develop a platform that provides the top ten actions an entrepreneur can take to strengthen a startup in a given industry and with a specific key performance indicator (KPI) provided, such as can be found here: [Gilion's Startup Metrics](https://www.gilion.com/basics/startup-metrics). This application would be useful for founding teams working to adjust their business strategy to better accommodate the current needs of their target market.
 
----
-
 ## Video Demo [Video Title](video_url)
 
 ## **Tech Required**
@@ -28,20 +26,6 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
 - **Recommendation Systems**:
   - Leverage collaborative and content-based filtering for personalized insights.
 
----
-## Key Features
-
-- **AI-Powered KPI Analysis**: Utilize Google's **Flan T5 LLM** to gather benchmark data and evaluate your business’s KPIs against industry standards.
-  
-- **Recommendation Engine**: Powered by Meta's **Llama LLM**, our system generates actionable, data-driven strategies tailored specifically to your startup's performance.
-  
-- **Sentiment Analysis**: Using **Hugging Face's BERT** model, we analyze the sentiment around your KPIs to understand the emotional and financial impact on your business.
-  
-- **Time Series Analysis & Visualization**: Our platform offers dynamic visualizations that help interpret trends and statistical foundations, making it easier to comprehend the impact of your decisions over time.
-
-- **User-Friendly Interface**: Developed using **Streamlit** and **Flask**, the app ensures a seamless and easy-to-use experience with no need for authentication, ensuring quick access while maintaining data privacy.
-  
-
 ## **Tech Stack**
 
 ### **Frontend**
@@ -54,7 +38,6 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
 - **Transformers** (Hugging Face models) (Meta llama, Google flan-t5)
 - **Pandas**
 
----
 
 ## **Project Team Members**
 - **Anmol Munnolli**  
@@ -62,8 +45,18 @@ Develop a platform that provides the top ten actions an entrepreneur can take to
 - **Virija Nandamudi**  
 - **Venkatesh Talasila**
 
----
+## Key Features
 
+- **AI-Powered KPI Analysis**: Utilize Google's **Flan T5 LLM** to gather benchmark data and evaluate your business’s KPIs against industry standards.
+  
+- **Recommendation Engine**: Powered by Meta's **Llama LLM**, our system generates actionable, data-driven strategies tailored specifically to your startup's performance.
+  
+- **Sentiment Analysis**: Using **Hugging Face's BERT** model, we analyze the sentiment around your KPIs to understand the emotional and financial impact on your business.
+  
+- **Time Series Analysis & Visualization**: Our platform offers dynamic visualizations that help interpret trends and statistical foundations, making it easier to comprehend the impact of your decisions over time.
+
+- **User-Friendly Interface**: Developed using **Streamlit** and **Flask**, the app ensures a seamless and easy-to-use experience with no need for authentication, ensuring quick access while maintaining data privacy.
+  
 ## **How to Run the Project**
 
 ### **1. Set up a Virtual Environment**
