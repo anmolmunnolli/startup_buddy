@@ -4,7 +4,7 @@
 
 Develop a platform that provides the top ten actions an entrepreneur can take to strengthen a startup in a given industry and with a specific key performance indicator (KPI) provided, such as can be found here: [Gilion's Startup Metrics](https://www.gilion.com/basics/startup-metrics). This application would be useful for founding teams working to adjust their business strategy to better accommodate the current needs of their target market.
 
-## Video Demo [Video Title](video_url)
+## Video Demo [Startup_Buddy](https://youtu.be/HEAWZIbh_mo)
 
 ## **Tech Required**
 
