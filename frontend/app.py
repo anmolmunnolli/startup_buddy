@@ -56,7 +56,6 @@ if st.button("Get Recommendations"):
 
 
 
-
                 # Function to clean and convert the values in Response column
                 def clean_and_convert(value):
                     # Remove dollar signs, commas, quotes, and percentages
@@ -90,40 +89,92 @@ if st.button("Get Recommendations"):
 
                 # Now, the cleaned responses will be numeric or appropriate values
                 # print(kpi_df)
-
-
                 kpis_transposed = kpi_df.set_index('KPI').T
-                print(kpis_transposed.columns)
-                kpis_transposed.reset_index(inplace=True)
 
-                # Drop the first row which contains the 'Response' values
-                # kpis_transposed.drop(index=0, inplace=True)
-                kpis_transposed = kpis_transposed.drop(index=0)
+                # Reset the index to remove any additional index column
+                kpis_transposed.reset_index(drop=True, inplace=True)
+                # original_df = original_df.set_index('KPI')
+                # Leave the first column name blank (like df1)
+                # kpis_transposed.columns = [''] + kpis_transposed.columns[1:].tolist()
+                # print(kpis_transposed.columns)
 
-                # Remove the first unnamed column (it is now in the column 'index')
-                kpis_transposed = kpis_transposed.drop(columns=['index'])
-                kpis_transposed.to_csv("cleaned_kpi.csv",header=True)
+                # # Drop the first row which contains the 'Response' values
+                kpis_transposed.drop(index=0, inplace=True)
+                # kpis_transposed = kpis_transposed.drop(index=0)
 
+                # # Remove the first unnamed column (it is now in the column 'index')
+                # kpis_transposed = kpis_transposed.drop(columns=['index'])
+                # kpis_transposed.to_csv("cleaned_kpi.csv",header=True)
 
-                # # Step 2: Align the column names of kpis_transposed to match df1's relevant columns
-                # kpis_transposed.columns = original_df.columns[3:]  # Align to df1 columns starting from the 4th column
-                
+                relevant_columns = ["Customer Acquisition Costs (CAC)", "Churn Rate (%)", "Average Order Size ($)", "Monthly Recurring Revenue (MRR) ($)", 
+                            "Annual Run Rate (ARR) ($)", "Cash Runway (Months)", "Burn Rate ($/Month)", "Gross Sales ($)", 
+                            "Monthly Active Users (MAU)", "Net Promoter Score (NPS)", "LTV/CAC Ratio"]
+                relevant_original_df = original_df[relevant_columns] # 3rd index corresponds to the 4th column (0-based indexing)
 
-                # print(kpis_transposed.columns, original_df.columns)
-                # # Step 3: Compare both DataFrames (df1 and kpis_transposed)
-                # # For simplicity, we will just add both DataFrames together based on the common KPI columns.
-                # comparison_df = pd.concat([original_df.iloc[:, 3:], kpis_transposed], axis=1)
-
-                # # Optional: Rename the columns for clarity if needed
-                # comparison_df.columns = [col + ' - df1' if i < len(original_df.columns[3:]) else col + ' - kpis_df' 
-                #                         for i, col in enumerate(comparison_df.columns)]
-
-                # # Show the result
-                # print(comparison_df)
-
-                # comparison_df.to_csv("compare.csv", header=True)
+                # # Step 2: Slice from the 2nd column onward in df2
+                relevalnt_kpis_transposed = kpis_transposed[relevant_columns]  # 1st index corresponds to the 2nd column (0-based indexing)
+                relevant_original_df.index.name = "KPI"
 
 
+                # # Transform KPI into the index for New df2
+                # kpis_transposed.set_index("KPI", inplace=True)
+                # kpis_transposed.index.name = "index"
+
+                # Print to verify
+                print("Aligned df1:")
+                print(relevant_original_df.head())
+
+                print("\nAligned df2:")
+                print(kpis_transposed.head())
+
+
+                import matplotlib.pyplot as plt
+                import numpy as np
+                # Ensure that all columns are numeric in df1 and df2
+                relevant_original_df = relevant_original_df.apply(pd.to_numeric, errors='coerce')
+                kpis_transposed = kpis_transposed.apply(pd.to_numeric, errors='coerce')
+
+
+                # Extract columns and compute mean for df1
+                kpi_labels = relevant_original_df.columns
+                df1_values = relevant_original_df.mean()  # Aggregating df1 values
+                df2_values = kpis_transposed.iloc[0]  # Taking the first row from df2
+
+                # Create a combined plot for all KPIs comparisons (Bar + Line Plot)
+                fig, axs = plt.subplots(len(kpi_labels), 2, figsize=(14, 8 * len(kpi_labels)))
+
+                # Loop through each KPI to create bar and line plots for all KPIs
+                for i, kpi in enumerate(kpi_labels):
+                    # Plot Bar chart for df1 vs df2
+                    axs[i, 0].bar(kpi, df1_values[kpi], width=0.4, label='Company KPIs', align='center', color='skyblue')
+                    axs[i, 0].bar(kpi, df2_values[kpi], width=0.4, label='Industry KPI Benchmark', align='edge', color='lightcoral')
+                    axs[i, 0].set_title(f"{kpi} - Bar Chart Comparison")
+                    axs[i, 0].set_ylabel("Values")
+                    axs[i, 0].legend()
+
+                    # Plot Line plot for df1 vs df2 (Individual KPI comparisons for both)
+                    # The x-values will be the row indices of relevant_original_df (0, 1, 2, etc.)
+                    x_values = np.arange(len(relevant_original_df))
+
+                    # Plot the line for the company KPIs (actual values across rows)
+                    axs[i, 1].plot(x_values, relevant_original_df[kpi], label=f"Company KPIs - {kpi}", marker='o', linestyle='-', color='blue', linewidth=2)
+
+                    # Plot the line for the industry benchmark (constant line)
+                    axs[i, 1].plot(x_values, [df2_values[kpi]] * len(x_values), label=f"Industry KPI Benchmark - {kpi}", marker='x', linestyle='--', color='red', linewidth=2)
+
+                    # Make x-axis labels more visible and cleaner
+                    axs[i, 1].set_title(f"{kpi} - Line Plot Comparison")
+                    axs[i, 1].set_ylabel("Values")
+                    axs[i, 1].set_xticks(x_values)  # Set the positions for x-axis labels
+                    axs[i, 1].set_xticklabels(x_values, rotation=45, ha='right', fontsize=10)  # Rotate and set font size
+                    axs[i, 1].grid(True, axis='x', linestyle='--', alpha=0.5)  # Add grid for better readability
+                    axs[i, 1].legend()
+
+                # Adjust layout and spacing
+                plt.tight_layout()
+
+                # Use Streamlit to display the plot
+                st.pyplot(fig)
             else:
                 st.write("No recommendations available.")
         else:
