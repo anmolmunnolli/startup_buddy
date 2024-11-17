@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
 import pandas as pd
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForCausalLM
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -42,7 +46,17 @@ def catch_data():
                             "Monthly Active Users (MAU)", "Net Promoter Score (NPS)", "LTV/CAC Ratio"]
 
         kpi_responses = generate_kpi_responses(industry, kpis)
-        return jsonify({"recommendations": kpi_responses})
+
+        kpis_data = {}
+        for kpi in kpis:
+            if kpi in df.columns:
+                kpis_data[kpi] = df[kpi].mean()  # Example: Calculate average values for KPIs
+
+        # Step 3: Generate LLaMA-based recommendations
+        llama_recommendations = generate_kpi_recommendations(industry, kpis_data)
+
+        return jsonify({"recommendations": kpi_responses,
+                    "llama_recommendations": llama_recommendations})
     else:
         return jsonify({"error": "Missing industry or file"}), 400
 
@@ -51,6 +65,42 @@ def catch_data():
 def get_industry():
     global industry
     return jsonify({"industry": industry})
+
+def get_recommendations_from_llama(industry, kpis_data):
+    # URL of the separate LLaMA recommendation service
+    llama_service_url = "http://localhost:5001/generate_recommendations"
+    
+    payload = {
+        "industry": industry,
+        "kpis_data": kpis_data
+    }
+
+    response = requests.post(llama_service_url, json=payload)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": "Error in fetching recommendations from LLaMA service"}
+
+def generate_kpi_recommendations(industry, kpis_data):
+    model_name = "openai-community/gpt2"  # You can adjust the model as per your preference
+    hf_token = os.getenv("HF_TOKEN") # Replace this with your actual token
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+    model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=hf_token)
+
+    recommendations = []
+    
+
+    # Loop through KPIs and create prompts to generate recommendations
+    for kpi, value in kpis_data.items():
+        prompt = f"Given the KPI {kpi} with a value of {value} for a {industry} company, what actions or recommendations can improve this KPI?"
+        inputs = tokenizer(prompt, return_tensors="pt")
+        outputs = model.generate(inputs.input_ids, max_length=150,    attention_mask=inputs.attention_mask,    pad_token_id=tokenizer.pad_token_id , num_return_sequences=1)
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        recommendations.append({"KPI": kpi, "Recommendation": response})
+    
+    return recommendations
 
 if __name__ == "__main__":
     app.run(debug=True)

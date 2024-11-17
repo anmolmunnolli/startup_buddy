@@ -35,7 +35,8 @@ if st.button("Get Recommendations"):
         
         if response.status_code == 200:
             recommendations = response.json().get("recommendations")
-            
+            llama_recommendations = response.json().get("llama_recommendations")
+
             # Display recommendations as a dataframe (table)
             if recommendations:
                 # Create a pandas DataFrame for the KPI responses
@@ -175,6 +176,11 @@ if st.button("Get Recommendations"):
 
                 # Use Streamlit to display the plot
                 st.pyplot(fig)
+
+
+                if llama_recommendations:
+                    st.write("### LLaMA Recommendations")
+                    st.write(llama_recommendations)
             else:
                 st.write("No recommendations available.")
         else:
