@@ -5,6 +5,11 @@ import re
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import matplotlib.pyplot as plt
 import numpy as np
+from textblob import TextBlob
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+
+nltk.download('vader_lexicon')
 
 industry = None
 
@@ -265,3 +270,37 @@ if st.session_state.uploaded_file:
                 )
         else:
             st.error("The data must include a 'Date' column for time series analysis.")
+
+# News Sentiment Analysis
+def analyze_sentiment(news_articles):
+    sia = SentimentIntensityAnalyzer()
+    sentiment_results = []
+
+    for article in news_articles:
+        sentiment = sia.polarity_scores(article)
+        sentiment_results.append(sentiment)
+    
+    return sentiment_results
+
+# Add a button for news analysis
+st.subheader("News Articles Sentiment Analysis")
+news_articles = st.text_area("Enter News Articles (separate with newline)", "")
+
+if st.button("Analyze News Sentiment"):
+    if news_articles:
+        news_articles_list = news_articles.split("\n")
+        sentiment_results = analyze_sentiment(news_articles_list)
+
+        st.write("Sentiment Analysis Results:")
+        for i, sentiment in enumerate(sentiment_results):
+            st.write(f"Article {i+1}: {sentiment}")
+        
+        st.write("Positive/Negative Highlights:")
+        for i, sentiment in enumerate(sentiment_results):
+            positive = [word for word in news_articles_list[i].split() if TextBlob(word).sentiment.polarity > 0.1]
+            negative = [word for word in news_articles_list[i].split() if TextBlob(word).sentiment.polarity < -0.1]
+            st.write(f"Article {i+1} - Positive Words: {', '.join(positive)}")
+            st.write(f"Article {i+1} - Negative Words: {', '.join(negative)}")
+
+    else:
+        st.warning("Please enter some news articles.")
