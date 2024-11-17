@@ -109,7 +109,7 @@ def generate_kpi_recommendations(industry, kpis_data):
     inputs = tokenizer(prompt, return_tensors="pt")
     outputs = model.generate(
         inputs.input_ids,
-        max_length=1000,
+        max_length=500,
         attention_mask=inputs.attention_mask,
         pad_token_id=tokenizer.pad_token_id,
         num_return_sequences=1,
@@ -128,7 +128,7 @@ def generate_kpi_recommendations(industry, kpis_data):
     #     inputs = tokenizer(prompt, return_tensors="pt")
     #     outputs = model.generate(inputs.input_ids, max_length=150,    attention_mask=inputs.attention_mask,    pad_token_id=tokenizer.pad_token_id , num_return_sequences=1)
     #     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    recommendations.append({"KPI": kpi, "Recommendation": response})
+    recommendations.append(response)
     
     return recommendations
 
